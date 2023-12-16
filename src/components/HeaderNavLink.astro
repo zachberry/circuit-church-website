@@ -1,0 +1,73 @@
+---
+import GlitchLink from "./GlitchLink.astro";
+
+interface Props {
+	href: string;
+	title: string;
+	icon: string;
+	newWindow: boolean;
+}
+
+const { href, title, icon, newWindow = false } = Astro.props;
+---
+
+<li class={icon ? `is-icon icon-${icon}` : ""}>
+	<GlitchLink href={href} target={newWindow ? "_blank" : ""}>
+		{title}
+	</GlitchLink>
+</li>
+
+<style>
+	a {
+		position: relative;
+		color: white;
+		text-decoration: none;
+		text-transform: uppercase;
+		cursor: pointer;
+	}
+
+	li {
+		list-style: none;
+		font-size: 1.2em;
+	}
+
+	li.is-icon {
+		width: 1.5em;
+		overflow: hidden;
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: 90%;
+	}
+	li.is-icon a {
+		width: 1.5em;
+	}
+	li.is-icon.icon-bandcamp,
+	li.is-icon.icon-bandcamp a {
+		width: 2.5em;
+	}
+	li.is-icon :global(span) {
+		opacity: 0;
+	}
+	.icon-facebook {
+		background: url(../images/logo-facebook.svg);
+	}
+	.icon-instagram {
+		background: url(../images/logo-instagram.svg);
+	}
+	.icon-bandcamp {
+		background: url(../images/logo-bandcamp.svg);
+	}
+	.icon-discord {
+		background: url(../images/logo-discord.svg);
+	}
+
+	@media (min-width: 680px) {
+		li {
+			font-size: 1em;
+		}
+
+		li span {
+			position: relative;
+		}
+	}
+</style>

@@ -1,0 +1,48 @@
+---
+interface Props {
+	href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a target="_blank" href={href}><slot /></a>
+
+<style>
+	a {
+		background: white;
+		color: black;
+		padding: 0.5em 1em;
+		vertical-align: middle;
+		align-items: center;
+		position: relative;
+		text-decoration: none;
+		text-transform: uppercase;
+		display: inline-block;
+	}
+
+	@supports (mix-blend-mode: exclusion) {
+		a::after {
+			content: " ";
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-image: url("../images/vhs.gif");
+			background-size: cover;
+			background-position: center;
+			mix-blend-mode: exclusion;
+		}
+
+		a:hover::after {
+			filter: brightness(4);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		a::after {
+			display: none;
+		}
+	}
+</style>

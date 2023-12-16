@@ -1,0 +1,175 @@
+---
+import { globSync } from "glob";
+
+interface Props {
+	artist: string;
+	title: string;
+	side: string;
+	tracks: string[];
+}
+
+const { side, tracks, title, artist } = Astro.props;
+
+const lcAlbumStr = (title || "").toLowerCase().replace(/ /g, "_").replace(/\W+/g, "");
+const mp3Urls = await globSync(`public/_audio/${lcAlbumStr}/*.mp3`).map((s) => s.replace(/^public/, ""));
+
+const getSongMp3Url = (track) =>
+	`/_audio/${lcAlbumStr}/${track.toLowerCase().replace(/ /g, "_").replace(/\W+/g, "")}.mp3`;
+const hasMp3 = (track) => mp3Urls.includes(getSongMp3Url(track));
+---
+
+{
+	tracks ? (
+		<div class={`track-listing-side`}>
+			{side ? <span class={`side side-${side.toLowerCase()}`}>Side {side}:</span> : null}
+			<ul>
+				{tracks.map((track) => (
+					<li>
+						{hasMp3(track) ? (
+							<button
+								data-artist={artist}
+								data-title={track}
+								data-mp3-src={getSongMp3Url(track)}
+								class="is-preview-available"
+							>
+								<span class="track-name">{track}</span>
+								<span class="listen-link">▶ Listen</span>
+							</button>
+						) : (
+							<span>{track}</span>
+						)}
+					</li>
+				))}
+			</ul>
+		</div>
+	) : null
+}
+<script>
+	function setup() {
+		[...document.querySelectorAll("button[data-mp3-src]")].forEach((buttonEl) => {
+			buttonEl.addEventListener("click", (e) => {
+				const { artist, title, mp3Src } = buttonEl.dataset;
+
+				if (window.circuitChurch.audioPlayer.url === mp3Src && window.circuitChurch.audioPlayer.getIsPlaying()) {
+					window.circuitChurch.audioPlayer.stop();
+				} else {
+					window.circuitChurch.audioPlayer.setTrack(artist, title, mp3Src, window.location.pathname);
+					window.circuitChurch.audioPlayer.play();
+				}
+			});
+		});
+	}
+
+	function updateButtons() {
+		const isPlaying = window.circuitChurch.audioPlayer.getIsPlaying();
+		const currentUrlPlaying = window.circuitChurch.audioPlayer.url;
+
+		[...document.querySelectorAll(`button[data-mp3-src]`)].forEach((buttonEl) => {
+			buttonEl.querySelector(".listen-link").innerText = "> Listen";
+			buttonEl.classList.remove("is-playing");
+		});
+
+		if (isPlaying) {
+			[...document.querySelectorAll(`button[data-mp3-src="${currentUrlPlaying}"]`)].forEach((buttonEl) => {
+				buttonEl.querySelector(".listen-link").innerText = "Stop";
+				buttonEl.classList.add("is-playing");
+			});
+		}
+	}
+
+	setup();
+	updateButtons();
+
+	document.addEventListener("circuit-church:audioplayerupdated", (event) => {
+		updateButtons();
+	});
+
+	document.addEventListener("astro:after-swap", () => {
+		setup();
+		updateButtons();
+	});
+</script>
+
+<style>
+	@keyframes pulse {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.75;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	.track-listing-side {
+		display: flex;
+		gap: 1em;
+	}
+
+	.side {
+		background-image: url(../images/switch.svg);
+		color: transparent;
+		width: 2em;
+		height: 2em;
+		overflow: hidden;
+		background-repeat: no-repeat;
+		background-position: center;
+		display: inline-block;
+	}
+
+	.side-b {
+		transform: scale(1, -1);
+	}
+
+	ul {
+		flex: 1;
+		padding: 0;
+		margin: 0;
+		padding-top: 0.2em;
+	}
+
+	li {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		margin-bottom: 0.2em;
+	}
+
+	button {
+		font-family: "Poppins";
+		border: none;
+		background: transparent;
+		padding: 0;
+		margin: 0;
+		color: white;
+		font-size: 1em;
+		display: flex;
+		gap: 0.5em;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	button .track-name {
+		text-decoration: underline;
+	}
+
+	button .listen-link {
+		text-transform: uppercase;
+		font-size: 0.7em;
+		border: 1px solid white;
+		padding: 0.2em;
+		border-radius: 0.2em;
+	}
+
+	.is-playing {
+		animation: pulse 1s ease-in-out infinite;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.is-playing {
+			animation: none;
+		}
+	}
+</style>

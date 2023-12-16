@@ -1,0 +1,11 @@
+---
+import HeaderNavLink from "./HeaderNavLink.astro";
+import constants from "../constants.js";
+
+const { urls } = constants;
+---
+
+<HeaderNavLink newWindow href={urls.bandcamp} title="Bandcamp" icon="bandcamp" />
+<HeaderNavLink newWindow href={urls.discord} title="Discord" icon="discord" />
+<HeaderNavLink newWindow href={urls.instagram} title="Instagram" icon="instagram" />
+<HeaderNavLink newWindow href={urls.facebook} title="Facebook" icon="facebook" />

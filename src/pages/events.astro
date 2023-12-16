@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Page from "../components/Page.astro";
+import Wrapper from "../components/Wrapper.astro";
+import constants from "../constants.js";
+import eventsJared from "../images/events-jared.jpg";
+import synthMeetup from "../images/synth-meetup.jpg";
+import H1 from "../components/H1.astro";
+import H2 from "../components/H2.astro";
+import P from "../components/P.astro";
+import ArticleImage from "../components/ArticleImage.astro";
+
+const { urls } = constants;
+---
+
+<Layout title="Circuit Church Events" description="Live electronic music performances & events in Orlando Florida">
+	<Page>
+		<Wrapper>
+			<H1>Events</H1>
+			<ArticleImage
+				src={eventsJared}
+				alt="Artist Pressurewave performing live electronic music at an outdoor Circuit Church event"
+			/>
+			<P>
+				We hold live shows monthly on the fourth Saturday of every month at <a
+					target="_blank"
+					href="https://www.facebook.com/thenookonrobinson/">The Nook on Robinson</a
+				> located in the heart of Orlando Florida's Milk District. For the latest information on events, including
+				dates, performers and details follow our <a target="_blank" href={urls.instagram}>instagram</a>
+			</P>
+			<H2>Synth Meetups</H2>
+			<ArticleImage
+				src={synthMeetup}
+				alt="Several musicians gathered around a table of synthesizers at a Circuit Church synth meetup"
+			/>
+			<P>
+				Keep a tab on our <a target="_blank" href={urls.instagram}>instagram</a> page for any upcoming synth meetups. If
+				you're in any way a gear nerd then you'll have a good time!
+			</P>
+			<H2>Want to perform?</H2>
+			<P>
+				We're always looking for performers (both experienced and first-timers) to join us and perform live at Circuit
+				Church. If you perform electronic music and are interested please reach out and send us a message over <a
+					target="_blank"
+					href={urls.instagram}>instagram</a
+				>.
+			</P>
+		</Wrapper>
+	</Page>
+</Layout>
+
+<style>
+	img {
+		width: 100%;
+		height: auto;
+	}
+
+	p {
+		margin-bottom: 3em;
+	}
+</style>

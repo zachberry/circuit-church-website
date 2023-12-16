@@ -1,0 +1,15 @@
+---
+interface Props extends Astro.Image {}
+
+import { Image } from "astro:assets";
+---
+
+<Image {...Astro.props} />
+
+<style>
+	img {
+		width: 100%;
+		height: auto;
+		margin-bottom: 2em;
+	}
+</style>

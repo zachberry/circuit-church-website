@@ -1,0 +1,116 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import VHSTransition from "../components/VHSTransition.astro";
+import AudioPlayer from "../components/AudioPlayer.astro";
+import constants from "../constants.js";
+import { fade } from "astro:transitions";
+
+interface Props {
+	title: string;
+	description: string;
+	ogImageUrl?: string;
+}
+
+const { title, description, ogImageUrl } = Astro.props;
+
+const baseURL = import.meta.env.PUBLIC_BASE_URL;
+const ogImagePath = `${baseURL}${ogImageUrl || constants.ogDefaultImageSrc}`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link href="https://fonts.googleapis.com/css?family=Poppins:300&display=swap" rel="stylesheet" />
+		<meta name="generator" content={Astro.generator} />
+		<ViewTransitions fallback="swap" />
+
+		<!-- HTML Meta Tags -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+
+		<!-- Facebook Meta Tags -->
+		<meta property="og:url" content={`${baseURL}${Astro.url.pathname}`} />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImagePath} />
+
+		<!-- Twitter Meta Tags -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta property="twitter:domain" content={baseURL} />
+		<meta property="twitter:url" content={`${baseURL}${Astro.url.pathname}`} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImagePath} />
+	</head>
+	<body transition:animate={fade({ duration: "0.5s" })}>
+		<slot />
+
+		<VHSTransition />
+		<AudioPlayer />
+
+		<style is:global>
+			:root {
+				--accent: 136, 58, 234;
+				--accent-light: 224, 204, 250;
+				--accent-dark: 49, 10, 101;
+				--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60%);
+			}
+
+			@keyframes vhs-in {
+				0% {
+					opacity: 0;
+				}
+
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes vhs-out {
+				0% {
+					opacity: 1;
+				}
+
+				100% {
+					opacity: 0;
+				}
+			}
+
+			::view-transition-old(vhs) {
+				animation: vhs-out 0.5s linear forwards;
+			}
+			::view-transition-new(vhs) {
+				animation: vhs-in 0.5s linear forwards;
+			}
+
+			.is-audio-player-open {
+				padding-bottom: 5em;
+			}
+
+			html {
+				background-color: black;
+				margin: 0;
+				padding: 0;
+				font-family: "Poppins";
+				color: white;
+				min-height: 100vh;
+			}
+
+			body {
+				background-color: black;
+				margin: 0;
+				padding: 0;
+				min-height: 100vh;
+				overscroll-behavior: none;
+				overflow: scroll;
+			}
+
+			a {
+				color: white;
+			}
+		</style>
+	</body>
+</html>

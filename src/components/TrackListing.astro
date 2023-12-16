@@ -1,0 +1,56 @@
+---
+import TrackListingSide from "./TrackListingSide.astro";
+
+interface Props {
+	artist: string;
+	title: string;
+	trackListing: {
+		sideA: string[];
+		sideB: string[];
+	};
+}
+
+const { title, artist, trackListing } = Astro.props;
+const { sideA, sideB } = trackListing;
+const isCassette = sideB?.length > 0;
+---
+
+<div class="track-listing is-cassette">
+	<h3>Tracklisting</h3>
+
+	<div class="sides">
+		{
+			isCassette ? (
+				<>
+					<TrackListingSide side="A" tracks={sideA} title={title} artist={artist} />
+					<TrackListingSide side="B" tracks={sideB} title={title} artist={artist} />
+				</>
+			) : (
+				<TrackListingSide title={title} tracks={sideA} artist={artist} />
+			)
+		}
+	</div>
+</div>
+
+<style>
+	.track-listing {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	.sides {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	h3 {
+		position: absolute;
+		width: 0;
+		height: 0;
+		color: transparent;
+		user-select: none;
+		pointer-events: none;
+	}
+</style>

@@ -1,0 +1,35 @@
+---
+interface Props {
+	label: string;
+	value: string | string[];
+}
+
+const { label, value } = Astro.props;
+
+const valueArray = [value].flat();
+const valueString =
+	valueArray.length > 1
+		? `${valueArray.slice(0, valueArray.length - 1).join(", ")} and ${valueArray[valueArray.length - 1]}`
+		: valueArray[0];
+---
+
+{
+	value ? (
+		<div class="release-detail">
+			<span class="label">{label}</span>
+			<span class="value">{valueString}</span>
+		</div>
+	) : null
+}
+
+<style>
+	.release-detail {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.label {
+		font-size: 0.75em;
+		text-transform: uppercase;
+	}
+</style>

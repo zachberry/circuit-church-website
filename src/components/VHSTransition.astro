@@ -1,0 +1,30 @@
+---
+import vhsGif from "../images/vhs.gif";
+
+interface Props {}
+---
+
+<img class="vhs-transition" transition:name="vhs" src={vhsGif.src} alt="vhs" />
+<style>
+	img {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 999999;
+		object-fit: fill;
+		mix-blend-mode: exclusion;
+		width: 100vw;
+		height: 100vh;
+		pointer-events: none;
+		user-select: none;
+		animation: vhs-out 0.5s linear forwards;
+		filter: saturate(3) brightness(3);
+		animation-iteration-count: 1;
+	}
+
+	@media (prefers-reduced-motion) {
+		img {
+			display: none;
+		}
+	}
+</style>

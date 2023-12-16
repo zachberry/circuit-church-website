@@ -1,0 +1,123 @@
+---
+import Header from "./Header.astro";
+
+interface Props {}
+---
+
+<div id="page">
+	<div class="scroll-tester" data-position="top"></div>
+	<Header />
+	<main>
+		<slot />
+		<div class="scroll-tester" data-position="bottom"></div>
+	</main>
+</div>
+<script>
+	let observer;
+
+	document.addEventListener("astro:after-swap", (event) => {
+		setup();
+	});
+
+	function onScroll(event) {
+		updateStickyHeaderClass("top", window.scrollY > 3);
+	}
+
+	function updateStickyHeaderClass(position, isStuck) {
+		switch (position) {
+			case "top":
+				if (isStuck) {
+					document.body.classList.add("is-top-stuck");
+				} else {
+					document.body.classList.remove("is-top-stuck");
+				}
+				break;
+
+			case "bottom":
+				if (isStuck) {
+					document.body.classList.add("is-bottom-stuck");
+				} else {
+					document.body.classList.remove("is-bottom-stuck");
+				}
+				break;
+		}
+	}
+
+	function setup() {
+		window.removeEventListener("scroll", onScroll);
+		window.removeEventListener("load", onScroll);
+
+		if (observer) {
+			observer.disconnect();
+		}
+
+		try {
+			if (!window.IntersectionObserver) {
+				throw Error("No intersection observer");
+			}
+
+			// Check if the video-header is visible, and toggle the
+			// sticky header based on that
+			observer = new IntersectionObserver(
+				(entries, observer) => {
+					entries.forEach((entry) => {
+						updateStickyHeaderClass(entry.target.dataset.position, !entry.isIntersecting);
+					});
+				},
+				{
+					root: null,
+					rootMargin: "0px",
+					threshold: 0,
+				},
+			);
+
+			const elTesters = document.getElementsByClassName("scroll-tester");
+			if (elTesters.length === 0) {
+				throw Error("No scroll tester element found");
+			}
+
+			observer.observe(elTesters[0]);
+			observer.observe(elTesters[1]);
+		} catch (e) {
+			console.info("Fallback to scroll event: " + e.message);
+			document.body.classList.add("is-bottom-stuck");
+			window.addEventListener("scroll", onScroll);
+			window.addEventListener("load", onScroll);
+		}
+	}
+
+	setup();
+</script>
+
+<style>
+	#page {
+		min-height: 100vh;
+	}
+
+	.scroll-tester {
+		position: absolute;
+		left: 0;
+		right: 0;
+		z-index: 99999999;
+		height: 3px;
+		pointer-events: none;
+		user-select: none;
+		opacity: 0;
+	}
+
+	.scroll-tester[data-position="top"] {
+		top: 0;
+	}
+
+	.scroll-tester[data-position="bottom"] {
+		bottom: 0;
+	}
+
+	:global(.is-top-stuck) :global(header) {
+		background: rgba(0, 0, 0, 0.95);
+	}
+
+	main {
+		position: relative;
+	}
+</style>

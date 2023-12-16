@@ -1,0 +1,46 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Page from "../components/Page.astro";
+import Wrapper from "../components/Wrapper.astro";
+import H1 from "../components/H1.astro";
+---
+
+<Layout title="Circuit Church Videos" description="Videos of Circuit Church performances and events">
+	<Page>
+		<Wrapper>
+			<H1>Videos</H1>
+			<iframe
+				src="https://www.youtube.com/embed/8ti4uxIGB7o?si=hL5lQxFUWbDNhS3w"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<iframe
+				src="https://www.youtube.com/embed/y72BmS4SG7k?si=xKHH-_6P_qZJ5pBX"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<iframe
+				src="https://www.youtube.com/embed/4vt1aWn6rkg?si=yVHVdeM1DEpsXjDl"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<iframe
+				src="https://www.youtube.com/embed/tlc2B6mrLl0?si=oT6j7FhTLVIKsJZU"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+		</Wrapper>
+	</Page>
+</Layout>
+
+<style>
+	iframe {
+		width: 100%;
+		aspect-ratio: 16/9;
+		padding-bottom: 2em;
+	}
+</style>

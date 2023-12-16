@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Page from "../components/Page.astro";
+import Wrapper from "../components/Wrapper.astro";
+import H1 from "../components/H1.astro";
+import H2 from "../components/H2.astro";
+import P from "../components/P.astro";
+import ArticleImage from "../components/ArticleImage.astro";
+import circuitChurchCrtTVAtTheNook from "../images/circuit-church-crt-tv-at-the-nook.jpg";
+---
+
+<Layout title="About Circuit Church" description="Info about the Circuit Church electronic music label & events">
+	<Page>
+		<Wrapper>
+			<H1>About</H1>
+			<P>
+				Circuit Church is an electronic music label and event series based out of Orlando, Florida. We're dedicated to
+				bringing excellent electronc music to life in live events, on cassette, and in high quality digital formats.
+			</P>
+			<ArticleImage
+				src={circuitChurchCrtTVAtTheNook}
+				alt="Image of the Circuit Church logo on a CRT TV on top of a counter at local Orlando bar The Nook on Robinson"
+			/>
+			<!-- <H2>Website</H2>
+			<P>
+				Our website was built by <a target="_blank" href="//zachberry.com">Zachary Berry</a> using the <a
+					target="_blank"
+					href="//astro.build/">Astro framework</a
+				>. Frequency spectrum analyzer visualizations shown when previewing tracks are powered by <a
+					target="_blank"
+					href="//audiomotion.dev/#/">audioMotion-analyzer</a
+				>.
+			</P> -->
+		</Wrapper>
+	</Page>
+</Layout>
+
+<style></style>

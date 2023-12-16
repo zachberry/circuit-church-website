@@ -1,0 +1,154 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+	image: Image;
+	releaseNumber: string;
+	artist: string;
+	title: string;
+	formats: string[];
+	trackListing: {
+		sideA: string[];
+		sideB: string[];
+	};
+	releaseDate: string;
+	authors: string[];
+	mastering: string[];
+	artwork: string[];
+	additionalCredits: string[];
+	production: string[];
+	purchaseLinks: {
+		service: string;
+		url: string;
+	}[];
+	streamingLinks: {
+		service: string;
+		url: string;
+	}[];
+}
+
+const { image, releaseNumber, artist, title } = Astro.props;
+---
+
+<div class="release-card">
+	<div class="image-container">
+		<Image src={image} alt={`Cover art for the release "${title}" by "${artist}"`} />
+	</div>
+	<div class="details">
+		<div class="release-number">{releaseNumber || "---"}</div>
+		<div class="artist-and-title">
+			<h2>{artist}</h2>
+			<h3>{title}</h3>
+		</div>
+	</div>
+</div>
+
+<style>
+	.release-card {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		cursor: pointer;
+		width: 100%;
+	}
+
+	.image-container {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		aspect-ratio: 1;
+	}
+
+	img {
+		width: 100%;
+		aspect-ratio: 1;
+		height: auto;
+		object-fit: cover;
+	}
+
+	.details {
+		display: flex;
+		flex-direction: row;
+		gap: 0.5em;
+	}
+
+	.release-number {
+		background: white;
+		color: black;
+		height: 1.8em;
+		padding: 0em 0.5em;
+		vertical-align: middle;
+		display: flex;
+		align-items: center;
+		position: relative;
+		transition: padding-right 0.1s ease-in-out;
+	}
+
+	.release-number::after {
+		content: " ";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image: url("../images/vhs.gif");
+		background-size: cover;
+		background-position: center;
+		mix-blend-mode: exclusion;
+		filter: brightness(4);
+		display: none;
+	}
+
+	.artist-and-title {
+		display: flex;
+		gap: 0em;
+		flex-direction: column;
+	}
+
+	h2,
+	h3 {
+		padding: 0;
+		margin: 0;
+		font-size: 0.9em;
+		text-transform: uppercase;
+		height: 1.3em;
+		line-height: 1em;
+	}
+
+	h3 {
+		margin-top: -0.2em;
+	}
+
+	.image-container::after {
+		content: " ";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image: url("../images/vhs.gif");
+		background-size: cover;
+		background-position: center;
+		mix-blend-mode: hue;
+		display: none;
+	}
+
+	.release-card:hover .image-container::after,
+	.release-card:hover .release-number::after {
+		display: block;
+	}
+	.release-card:hover .release-number {
+		padding-right: 2em;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.release-card:hover .image-container::after,
+		.release-card:hover .release-number::after {
+			display: none;
+		}
+
+		.release-number {
+			transition: none;
+		}
+	}
+</style>

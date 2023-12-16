@@ -1,0 +1,19 @@
+---
+interface Props {
+	style: Record<string, any>;
+}
+
+const { style } = Astro.props;
+---
+
+<h2 style={style || ""}><slot /></h2>
+
+<style>
+	h2 {
+		padding: 0;
+		margin: 0;
+		font-size: 2em;
+		margin-bottom: 0.5em;
+		letter-spacing: -0.02em;
+	}
+</style>

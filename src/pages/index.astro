@@ -1,0 +1,117 @@
+---
+import Layout from "../layouts/Layout.astro";
+import WillLogo from "../components/WillLogo.astro";
+import constants from "../constants.js";
+import HeaderInternalLinksList from "../components/HeaderInternalLinksList.astro";
+import HeaderExternalLinksList from "../components/HeaderExternalLinksList.astro";
+---
+
+<Layout
+	title="Circuit Church"
+	description="Orlando Florida electronic music artist collective and cassette label featuring local live performances & releases"
+>
+	<main>
+		<h1>Circuit Church</h1>
+		<h2>Electronic Music Label & Event Series</h2>
+		<div class="content">
+			<WillLogo />
+			<nav>
+				<ul>
+					<HeaderInternalLinksList />
+					<HeaderExternalLinksList />
+				</ul>
+			</nav>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	@keyframes scroll {
+		0% {
+			background-position-x: 50%;
+			background-position-y: 0%;
+		}
+
+		50% {
+			background-position-x: 50%;
+		}
+
+		100% {
+			background-position-x: 50%;
+			background-position-y: 100%;
+		}
+	}
+	main {
+		width: 100vw;
+		height: 100vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		animation: scroll 24s linear infinite;
+		/* background-size: 240px; */
+		background-size: 500px;
+	}
+
+	main h1,
+	main h2 {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	.content {
+		display: flex;
+		gap: 1em;
+		flex-direction: column;
+		justify-content: center;
+		padding: 2em;
+		width: 100%;
+		max-width: 60em;
+	}
+
+	nav {
+		text-align: center;
+		display: flex;
+		justify-content: center;
+	}
+
+	nav ul {
+		padding: 0;
+		margin: 0;
+		display: flex;
+		gap: 0.5em;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	nav a {
+		color: rgb(223, 223, 223);
+		text-decoration: none;
+		font-size: 1.5em;
+		position: relative;
+		cursor: pointer;
+		display: block;
+	}
+
+	@media (min-width: 680px) {
+		main {
+			overflow: hidden;
+		}
+
+		.content {
+			gap: 1em;
+		}
+
+		nav ul {
+			flex-direction: row;
+			gap: 1em;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		main {
+			background: black;
+		}
+	}
+</style>

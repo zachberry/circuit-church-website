@@ -1,0 +1,169 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Wrapper from "../../components/Wrapper.astro";
+import Page from "../../components/Page.astro";
+import Divider from "../../components/Divider.astro";
+import TrackListing from "../../components/TrackListing.astro";
+import PurchaseLinks from "../../components/PurchaseLinks.astro";
+import StreamingLinks from "../../components/StreamingLinks.astro";
+import ReleaseDetail from "../../components/ReleaseDetail.astro";
+import { Image } from "astro:assets";
+
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+	const releases = await getCollection("releases");
+	return releases.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Layout
+	title={`${entry.data.artist} - ${entry.data.title}`}
+	description={`Circuit Church Release${entry.data.releaseNumber ? ` #${entry.data.releaseNumber}` : ""}`}
+	ogImageUrl={entry.data.ogImageUrl}
+>
+	<Page>
+		{
+			entry.data.backgroundVideoUrl ? (
+				<video src={entry.data.backgroundVideoUrl} autoplay loop muted playsinline />
+			) : null
+		}
+		<Wrapper>
+			<div class="primary-details">
+				<h1>{entry.data.artist}</h1>
+				<h2>{entry.data.title}</h2>
+				{entry.data.releaseNumber ? <h3 class="release">Circuit Church Release #{entry.data.releaseNumber}</h3> : null}
+			</div>
+
+			<Image class="hero-image" src={entry.data.image} alt="Image of this release" />
+			<Content />
+			<Divider />
+			<div class="details">
+				<TrackListing {...entry.data} />
+				<Divider />
+				<ReleaseDetail
+					label="Release Date"
+					value={entry.data.releaseDate
+						? new Date(entry.data.releaseDate).toLocaleDateString("en-US", {
+								year: "numeric",
+								month: "long",
+								day: "numeric",
+						  })
+						: null}
+				/>
+				<ReleaseDetail label="Formats" value={entry.data.formats} />
+				<ReleaseDetail label="Written by" value={entry.data.authors} />
+				<ReleaseDetail label="Additional Credits" value={entry.data.additionalCredits} />
+				<ReleaseDetail label="Produced by" value={entry.data.production} />
+				<ReleaseDetail label="Mastering" value={entry.data.mastering} />
+				<ReleaseDetail label="Artwork by" value={entry.data.artwork} />
+			</div>
+			<Divider />
+		</Wrapper>
+
+		<div class="listen">
+			<Wrapper>
+				<div class="listen-wrapper">
+					<PurchaseLinks {...entry.data} />
+					<StreamingLinks {...entry.data} />
+				</div>
+			</Wrapper>
+		</div>
+	</Page>
+</Layout>
+<style>
+	video {
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		object-fit: cover;
+		width: 100vw;
+		height: 100vh;
+	}
+
+	.wrapper {
+		position: relative;
+	}
+
+	.release {
+		text-transform: uppercase;
+		font-size: 0.75em;
+	}
+
+	.hero-image {
+		width: 100%;
+		height: auto;
+		max-width: 30em;
+	}
+
+	h1,
+	h2,
+	h3 {
+		margin: 0;
+	}
+
+	h1 {
+		margin-bottom: -0.25em;
+	}
+
+	h2 {
+		margin-bottom: 0.25em;
+	}
+
+	.primary-details {
+		margin-bottom: 2em;
+	}
+
+	.details > :global(*) {
+		margin-bottom: 1em;
+	}
+
+	.listen {
+		position: sticky;
+		left: 0;
+		right: 0;
+		bottom: 0em;
+		background: transparent;
+		padding: 1em 0;
+		margin-top: -1em;
+		transition:
+			background 0.25s ease-in-out,
+			bottom 0.3s ease-in-out;
+	}
+
+	:global(.is-bottom-stuck) .listen {
+		background: rgba(0, 0, 0, 0.9);
+	}
+
+	:global(.is-audio-player-open) .listen {
+		bottom: 5em;
+	}
+
+	.listen > :global(*):not(:last-child) {
+		margin-bottom: 1em;
+	}
+
+	.listen-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5em;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		video {
+			display: none;
+		}
+
+		.listen {
+			transition: none;
+		}
+	}
+</style>

@@ -1,0 +1,291 @@
+---
+import TapeIcon from "./TapeIcon.astro";
+import Wrapper from "./Wrapper.astro";
+---
+
+<div transition:persist class="audio-player">
+	<div id="visuals"></div>
+	<Wrapper>
+		<div class="contents">
+			<TapeIcon />
+
+			<a class="artist-and-title">
+				<span class="artist">Artist</span>
+				<span class="title">Title</span>
+			</a>
+			<button class="button-play-pause">Play / Pause</button>
+			<button class="button-close">Close</button>
+		</div>
+	</Wrapper>
+	<audio transition:persist id="audio-player"></audio>
+
+	<!-- To avoid FOUC of the pause icon we load it in this hidden div so it gets cached: -->
+	<div class="image-cache">
+		<div id="pause"></div>
+	</div>
+</div>
+
+<script>
+	const buttonClose = document.querySelector(".button-close");
+	const buttonPlayPause = document.querySelector(".button-play-pause");
+	const audio = document.getElementById("audio-player");
+
+	buttonClose.addEventListener("click", () => {
+		window.circuitChurch.audioPlayer.close();
+	});
+	buttonPlayPause.addEventListener("click", () => {
+		window.circuitChurch.audioPlayer.toggle();
+	});
+
+	audio.addEventListener("ended", () => {
+		audioPlayer.shouldPlay = false;
+		updateDOM();
+	});
+
+	audio.addEventListener("playing", () => {
+		updateDOM();
+	});
+
+	const audioPlayer = {
+		isOpen: false,
+		shouldPlay: false,
+		artist: null,
+		title: null,
+		url: null,
+		releaseUrl: null,
+
+		open: () => {
+			audioPlayer.isOpen = true;
+			updateDOM();
+		},
+
+		close: () => {
+			audioPlayer.isOpen = false;
+			audioPlayer.shouldPlay = false;
+			audioPlayer.url = null;
+			audioPlayer.releaseUrl = null;
+			updateDOM();
+		},
+
+		setTrack: (artist, title, url, releaseUrl = null) => {
+			audioPlayer.artist = artist;
+			audioPlayer.title = title;
+			audioPlayer.url = url;
+			audioPlayer.releaseUrl = releaseUrl;
+			updateDOM();
+		},
+
+		play: (artist, title, url) => {
+			audioPlayer.isOpen = true;
+			audioPlayer.shouldPlay = true;
+			updateDOM();
+
+			buttonPlayPause.focus();
+		},
+
+		stop: () => {
+			audioPlayer.shouldPlay = false;
+			updateDOM();
+		},
+
+		toggle: () => {
+			if (audioPlayer.shouldPlay) {
+				audioPlayer.stop();
+			} else {
+				audioPlayer.play();
+			}
+		},
+
+		getIsPlaying: () => {
+			const audio = document.getElementById("audio-player");
+			return !audio.paused;
+		},
+	};
+
+	function updateDOM() {
+		const audio = document.getElementById("audio-player");
+		const artist = document.querySelector(".artist");
+		const title = document.querySelector(".title");
+		const artistAndTitle = document.querySelector(".artist-and-title");
+
+		if (audioPlayer.url && audioPlayer.url !== audio.src.replace(window.location.origin, "")) {
+			audio.src = audioPlayer.url;
+		} else if (!audioPlayer.url) {
+			audio.src = "";
+		}
+
+		if (audioPlayer.isOpen) {
+			document.body.classList.add("is-audio-player-open");
+		} else {
+			document.body.classList.remove("is-audio-player-open");
+		}
+
+		if (audioPlayer.shouldPlay && audio.paused) {
+			audio.play();
+		} else if (!audioPlayer.shouldPlay && !audio.paused) {
+			audio.pause();
+		}
+
+		if (!audio.paused) {
+			document.body.classList.add("is-audio-player-playing");
+		} else {
+			document.body.classList.remove("is-audio-player-playing");
+		}
+
+		artist.innerText = audioPlayer.artist || "";
+		title.innerText = audioPlayer.title || "";
+
+		artistAndTitle.href = audioPlayer.releaseUrl || "#";
+
+		document.dispatchEvent(new CustomEvent("circuit-church:audioplayerupdated", { detail: audioPlayer }));
+	}
+
+	window.circuitChurch = {
+		audioPlayer,
+	};
+
+	document.addEventListener("astro:after-swap", () => {
+		updateDOM();
+	});
+</script>
+<script type="module">
+	import AudioMotionAnalyzer from "https://cdn.skypack.dev/audiomotion-analyzer?min";
+
+	if (!window.circuitChurch.audioMotion) {
+		window.circuitChurch.audioMotion = new AudioMotionAnalyzer(document.getElementById("visuals"), {
+			source: document.getElementById("audio-player"),
+			gradient: "prism",
+			showScaleX: false,
+			mode: 7,
+			ledBars: true,
+		});
+	}
+</script>
+
+<style>
+	:global(.is-audio-player-open) .audio-player {
+		transform: translate(0, 0);
+		pointer-events: all;
+		opacity: 1;
+	}
+
+	.audio-player {
+		background: black;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 5em;
+		display: flex;
+		align-items: center;
+		transform: translate(0, 100%);
+		transition: transform 0.3s ease-in-out;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		pointer-events: none;
+		opacity: 0;
+	}
+
+	.contents {
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		flex: 1;
+	}
+
+	.artist-and-title {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: 0;
+		margin-top: 0.2em;
+		cursor: pointer;
+		text-decoration: none;
+	}
+
+	.artist-and-title:hover {
+		text-decoration: underline;
+	}
+
+	.artist {
+		font-size: 0.7em;
+		text-transform: uppercase;
+		margin-bottom: -0.3em;
+	}
+
+	.title {
+		font-size: 0.9em;
+	}
+
+	button {
+		width: 3.5em;
+		height: 3.5em;
+		border-radius: 4em;
+		border: none;
+		color: transparent;
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	.button-play-pause {
+		background-image: url(../images/play.svg);
+		background-size: 30%;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-color: rgba(255, 255, 255, 0.9);
+	}
+
+	.button-play-pause:hover {
+		background-color: white;
+	}
+
+	:global(.is-audio-player-playing) .button-play-pause {
+		background-image: url(../images/pause.svg);
+	}
+
+	.button-close {
+		background-image: url(../images/close-x.svg);
+		background-size: 30%;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-color: rgba(255, 255, 255, 0.2);
+	}
+
+	.button-close:hover {
+		background-color: rgba(255, 255, 255, 0.4);
+	}
+
+	#visuals {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		height: 5em;
+		opacity: 0.5;
+	}
+
+	#image-cache {
+		position: fixed;
+		right: 0;
+		top: 0;
+		z-index: 999999999;
+		pointer-events: none;
+		user-select: none;
+		transform: translate(200%, 0);
+	}
+
+	#image-cache .pause {
+		background-image: url(../images/pause.svg);
+		width: 1px;
+		height: 1px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		#visuals {
+			display: none;
+		}
+
+		.audio-player {
+			transition: none;
+		}
+	}
+</style>

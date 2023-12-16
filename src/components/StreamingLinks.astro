@@ -1,0 +1,51 @@
+---
+import GlitchLink from "./GlitchLink.astro";
+interface Props {
+	streamingLinks: {
+		service: string;
+		url: string;
+	}[];
+}
+
+const { streamingLinks } = Astro.props;
+---
+
+{
+	streamingLinks ? (
+		<div class="streaming-links">
+			<span>Listen:</span>
+			<ul>
+				{streamingLinks.map((streamingLinks) => (
+					<li>
+						<GlitchLink target="_blank" href={streamingLinks.url}>
+							{streamingLinks.service}
+						</GlitchLink>
+					</li>
+				))}
+			</ul>
+		</div>
+	) : null
+}
+
+<style>
+	.streaming-links {
+		display: flex;
+		gap: 1em;
+	}
+
+	ul {
+		padding: 0;
+		margin: 0;
+		display: flex;
+		gap: 1em;
+	}
+
+	li {
+		list-style: none;
+	}
+
+	a {
+		text-transform: uppercase;
+		font-size: 0.8em;
+	}
+</style>

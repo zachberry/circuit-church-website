@@ -1,0 +1,53 @@
+---
+interface Props {}
+
+const { ...aProps } = Astro.props;
+---
+
+<a {...aProps}><span><slot /></span></a>
+
+<style>
+	a {
+		color: white;
+		position: relative;
+		display: inline-block;
+	}
+
+	span {
+		position: relative;
+		z-index: 1;
+	}
+
+	@supports (mix-blend-mode: exclusion) {
+		a::before {
+			background-image: url(../images/vhs.gif);
+			content: " ";
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			filter: saturate(3) brightness(5) invert(1);
+			opacity: 0;
+			mix-blend-mode: exclusion;
+		}
+
+		a:hover {
+			color: black;
+		}
+
+		a:hover::before {
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		a:hover {
+			color: white;
+		}
+
+		a::before {
+			display: none;
+		}
+	}
+</style>

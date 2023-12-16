@@ -1,0 +1,39 @@
+---
+import GlitchLinkButton from "./GlitchLinkButton.astro";
+
+interface Props {
+	purchaseLinks: {
+		service: string;
+		url: string;
+	}[];
+}
+
+const { purchaseLinks } = Astro.props;
+---
+
+{
+	purchaseLinks ? (
+		<div class="purchase-links">
+			<ul>
+				{purchaseLinks.map((purchaseLink) => (
+					<li>
+						<GlitchLinkButton href={purchaseLink.url}>Buy at {purchaseLink.service}</GlitchLinkButton>
+					</li>
+				))}
+			</ul>
+		</div>
+	) : null
+}
+
+<style>
+	ul {
+		padding: 0;
+		margin: 0;
+		display: flex;
+		gap: 1em;
+	}
+
+	li {
+		list-style: none;
+	}
+</style>

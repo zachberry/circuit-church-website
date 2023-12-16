@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Page from "../components/Page.astro";
+import Wrapper from "../components/Wrapper.astro";
+import ReleaseCard from "../components/ReleaseCard.astro";
+import { getCollection } from "astro:content";
+import H1 from "../components/H1.astro";
+
+const releases = await getCollection("releases");
+const sortedReleases = releases.sort((a, b) => {
+	const aDate = new Date(a.data.releaseDate);
+	const bDate = new Date(b.data.releaseDate);
+	return bDate - aDate;
+});
+---
+
+<Layout
+	title="Circuit Church Releases"
+	description="Physical cassette and streaming releases of modular synth, electronic, experimental and synth pop music"
+>
+	<Page>
+		<Wrapper>
+			<H1>Releases</H1>
+			<div class="releases">
+				{
+					sortedReleases.map((release) => (
+						<a href={`/releases/${release.slug}`}>
+							<ReleaseCard {...release.data} />
+						</a>
+					))
+				}
+			</div>
+		</Wrapper>
+	</Page>
+</Layout>
+
+<style>
+	.releases {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 3em;
+		padding-bottom: 2em;
+	}
+
+	a {
+		text-decoration: none;
+		color: inherit;
+		display: flex;
+		width: 100%;
+	}
+
+	@media (min-width: 680px) {
+		a {
+			width: calc(50% - 1.5em);
+		}
+	}
+</style>

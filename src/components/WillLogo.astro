@@ -1,0 +1,231 @@
+---
+import videoLogo from "../images/cclogo.mp4";
+import staticLogo from "../images/logo-with-title.svg";
+import { Image } from "astro:assets";
+
+interface Props {}
+---
+
+<div>
+	<div class="will-logo">
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div class="img-copy-container"><img class="img-copy" /></div>
+		<div id="canvas-container"><canvas id="canvas"></canvas></div>
+		<video id="logo" src={videoLogo} autoplay loop muted playsinline></video>
+		<Image id="static-logo" src={staticLogo} alt="Circuit Church Logo" />
+	</div>
+</div>
+<script>
+	const ANI_DURAITON_MS = 2000;
+	const LERP_MULT = 0.25;
+	const CANVAS_COPY_SCALE_FACTOR = 0.2;
+	let intervalId, root, video, canvas, ctx, targetIndex, copies, targetMouseX, targetMouseY, curMouseX, curMouseY;
+
+	document.addEventListener("astro:after-swap", () => {
+		setup();
+	});
+	setup();
+
+	function onMouseMove(event) {
+		targetMouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+		targetMouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+	}
+
+	function onMouseLeave() {
+		targetMouseX = 0;
+		targetMouseY = -1;
+	}
+
+	function setup() {
+		clearInterval(intervalId);
+		root = document.querySelector(".will-logo");
+
+		if (!root) {
+			return;
+		}
+
+		targetMouseX = curMouseX = 0;
+		targetMouseY = curMouseY = -1;
+
+		copies = [...document.getElementsByClassName("img-copy")];
+
+		video = document.getElementById("logo");
+		canvas = document.getElementById("canvas");
+		ctx = canvas.getContext("2d");
+		targetIndex = 0;
+
+		intervalId = setInterval(() => {
+			tick();
+		}, ANI_DURAITON_MS / copies.length);
+
+		document.removeEventListener("mousemove", onMouseMove);
+		document.removeEventListener("mouseleave", onMouseLeave);
+		document.addEventListener("mousemove", onMouseMove);
+		document.addEventListener("mouseleave", onMouseLeave);
+	}
+
+	function tick() {
+		canvas.width = video.videoWidth * CANVAS_COPY_SCALE_FACTOR;
+		canvas.height = video.videoHeight * CANVAS_COPY_SCALE_FACTOR;
+		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+		const canvasDataUrl = canvas.toDataURL("image/png");
+
+		if (canvasDataUrl.length < 100) {
+			return;
+		}
+
+		if (curMouseX !== targetMouseX) {
+			curMouseX += (targetMouseX - curMouseX) * LERP_MULT;
+		}
+		if (curMouseY !== targetMouseY) {
+			curMouseY += (targetMouseY - curMouseY) * LERP_MULT;
+		}
+
+		targetIndex = (targetIndex + 1) % copies.length;
+		const copy = copies[targetIndex];
+
+		copy.src = canvasDataUrl;
+		const videoBBox = video.getBoundingClientRect();
+		copy.style.width = `${videoBBox.width}px`;
+		copy.style.height = `${videoBBox.height}px`;
+		copy.style.left = `${videoBBox.left}px`;
+		copy.style.top = `${videoBBox.top}px`;
+
+		const keyframes = [
+			{ transform: "translate(0, 0) scale(1)", opacity: 0.8 },
+			{ transform: `translate(${curMouseX * 100}%, ${curMouseY * 100}%) scale(0.3)`, opacity: 0 },
+		];
+
+		copy.parentElement.animate(keyframes, {
+			duration: ANI_DURAITON_MS,
+			iterations: 1,
+			easing: "ease-out",
+		});
+	}
+</script>
+
+<style>
+	.will-logo {
+		position: relative;
+		max-width: 650px;
+		margin: 0 auto;
+	}
+
+	canvas {
+		opacity: 0;
+	}
+
+	#canvas-container {
+		position: fixed;
+		right: 0;
+		top: 0;
+		transform: translate(-200%, -200%);
+		pointer-events: none;
+		user-select: none;
+		width: 1px;
+		height: 1px;
+	}
+
+	.img-copy-container {
+		position: absolute;
+		mix-blend-mode: lighten;
+		display: none;
+	}
+	.img-copy-container::after {
+		content: " ";
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+	}
+	.img-copy-container img {
+		filter: blur(4px);
+	}
+
+	@keyframes logo-fx {
+		0% {
+			filter: brightness(1) saturate(1);
+		}
+
+		10% {
+			filter: brightness(1) saturate(1);
+		}
+
+		20% {
+			filter: brightness(1) saturate(0);
+		}
+
+		30% {
+			filter: brightness(1) saturate(1);
+		}
+
+		70% {
+			filter: brightness(1) saturate(1);
+		}
+
+		80% {
+			filter: brightness(5) saturate(3);
+		}
+
+		90% {
+			filter: brightness(1) saturate(1);
+		}
+	}
+
+	video {
+		mix-blend-mode: lighten;
+		position: relative;
+		animation: logo-fx 5s ease-in-out infinite;
+		width: 100%;
+		height: 100%;
+		object-fit: fill;
+	}
+
+	/* Logo to use for reduced motion */
+	#static-logo {
+		display: none;
+		width: 100%;
+		height: auto;
+	}
+
+	@media (min-width: 680px) {
+		.img-copy-container {
+			display: block;
+		}
+
+		.will-logo {
+			aspect-ratio: 1.8;
+		}
+
+		video {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.img-copy-container {
+			display: none;
+		}
+
+		video {
+			display: none;
+		}
+
+		#static-logo {
+			display: block;
+		}
+	}
+</style>
