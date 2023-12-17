@@ -1,0 +1,14 @@
+name: Deploy demo branch to demo site
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - demo
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
+      environment: demo
