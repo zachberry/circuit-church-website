@@ -31,7 +31,7 @@ const { Content } = await entry.render();
 	<Page>
 		{
 			entry.data.backgroundVideoUrl ? (
-				<video src={entry.data.backgroundVideoUrl} autoplay loop muted playsinline />
+				<video src={entry.data.backgroundVideoUrl} autoplay loop muted playsinline disableRemotePlayback />
 			) : null
 		}
 		<Wrapper>
