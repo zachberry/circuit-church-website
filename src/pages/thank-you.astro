@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Page from "../components/Page.astro";
+import Wrapper from "../components/Wrapper.astro";
+import H1 from "../components/H1.astro";
+import P from "../components/P.astro";
+import GlitchLinkButton from "../components/GlitchLinkButton.astro";
+---
+
+<Layout title="Support Circuit Church" description="Donate to help us grow the label and bring in new artists">
+	<!-- <Page> -->
+
+	<Wrapper
+		style={{
+			textAlign: "center",
+			display: "flex",
+			flexDirection: "column",
+			justifyContent: "center",
+			alignItems: "center",
+			height: "100vh",
+		}}
+	>
+		<div class="logo"></div>
+		<H1 style={{ lineHeight: "1em", fontSize: "5em" }}>Thank You!</H1>
+		<P style={{ marginBottom: "5em", maxWidth: "30em" }}>
+			Your support means a ton to a small organization like us - Thank you for helping us grow!
+		</P>
+		<GlitchLinkButton href="/" target="_self">Return Home</GlitchLinkButton>
+	</Wrapper>
+	<!-- </Page> -->
+</Layout>
+
+<script>
+	import JSConfetti from "js-confetti";
+
+	const jsConfetti = new JSConfetti();
+
+	const showConfetti = () => {
+		jsConfetti.addConfetti({
+			confettiRadius: 6,
+			confettiColors: ["#0080d6", "#00c9e6", "#00f286", "#73fe00", "#f2b300", "#ff66e4"],
+		});
+	};
+
+	document.addEventListener("click", showConfetti);
+
+	showConfetti();
+</script>
+
+<style>
+	.logo {
+		background-image: url("../images/logo.svg");
+		background-position: center;
+		background-repeat: no-repeat;
+		color: transparent;
+		width: 16em;
+		height: 10em;
+		display: inline-block;
+		margin-bottom: 2em;
+	}
+</style>

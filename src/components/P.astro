@@ -1,4 +1,12 @@
-<p><slot /></p>
+---
+interface Props {
+	style?: Record<string, any>;
+}
+
+const { style } = Astro.props;
+---
+
+<p style={style || ""}><slot /></p>
 
 <style>
 	p {
