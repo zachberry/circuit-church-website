@@ -4,6 +4,9 @@ import Page from "../components/Page.astro";
 import Wrapper from "../components/Wrapper.astro";
 import H1 from "../components/H1.astro";
 import P from "../components/P.astro";
+import constants from "../constants.js";
+
+const { urls } = constants;
 ---
 
 <Layout title="Support Circuit Church" description="Donate to help us grow the label and bring in new artists">
@@ -11,27 +14,34 @@ import P from "../components/P.astro";
 		<Wrapper>
 			<H1>Support</H1>
 			<P>
-				We're a small organization that runs on a tiny budget. We love doing it, but it isn't cheap. If you enjoy what
-				we are doing, consider <a href="/releases">buying our tapes</a>, <a
+				The best way to support us is to <a href={urls.patreon} target="_blank">join our Patreon</a>! We only have one
+				tier - cheaper than paying for a show, and since we don't charge for our shows, it really helps us out to be a
+				member. Plus we'll put some stuff up here just for you sometimes. Stuff you might like.
+			</P>
+			<P>
+				Looking for other ways to support Circuit Church? You can <a href="/releases">buy our tapes</a>, <a
 					target="_blank"
-					href="https://circuit-church.printify.me">merch</a
-				> or making a donation using the links below. Proceeds help us fund our cassette label, pay performers and bring
+					href={urls.printify}>merch</a
+				> or make a donation using the links below. Proceeds help us fund our cassette label, pay performers and bring
 				in new and diverse artists.
 			</P>
 			<P>
-				<a target="_blank" href="https://circuitchurch.bandcamp.com/">Buy Tapes at Bandcamp</a>
+				<a target="_blank" href={urls.patreon}>Join our Patreon!</a>
 			</P>
 			<P>
-				<a target="_blank" href="https://circuit-church.printify.me">Buy Circuit Church Shirts</a>
+				<a target="_blank" href={urls.bandcamp}>Buy Tapes at Bandcamp</a>
 			</P>
 			<P>
-				<a target="_blank" href="https://www.paypal.com/donate/?hosted_button_id=BL4UP8BGNBHZ8">Donate via PayPal</a>
+				<a target="_blank" href={urls.printify}>Buy Circuit Church Shirts</a>
 			</P>
 			<P>
-				<a target="_blank" href="https://venmo.com/code?user_id=3304775152041984477&printed=1">Donate via Venmo</a>
+				<a target="_blank" href={urls.paypal}>Donate via PayPal</a>
 			</P>
 			<P>
-				<a target="_blank" href="https://cash.app/$circuitchurch?qr=1">Donate via Cash App</a>
+				<a target="_blank" href={urls.venmo}>Donate via Venmo</a>
+			</P>
+			<P>
+				<a target="_blank" href={urls.cashApp}>Donate via Cash App</a>
 			</P>
 		</Wrapper>
 	</Page>
